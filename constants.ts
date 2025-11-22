@@ -1,6 +1,14 @@
-import { Product } from './types';
+
+import { Product, User } from './types';
 
 export const CURRENCY = "RWF"; 
+
+export const MOCK_ADMIN_USER: User = {
+  id: 'admin-001',
+  name: 'System Administrator',
+  email: 'admin@ecuruza.com',
+  role: 'admin'
+};
 
 export const MOCK_PRODUCTS: Product[] = [
   {

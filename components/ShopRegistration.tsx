@@ -22,8 +22,10 @@ const ShopRegistration: React.FC<ShopRegistrationProps> = ({ onRegister }) => {
     const newShop: Shop = {
       id: `shop-${Date.now()}`,
       ...formData,
-      isVerified: true, // Auto-verify for demo purposes as implied "approved"
-      ownerId: 'current-user-id' // Would be dynamic
+      isVerified: false, // Verification happens after subscription
+      ownerId: 'current-user-id', // Would be dynamic
+      subscriptionStatus: 'none', // Initial state
+      subscriptionEndDate: new Date().toISOString(),
     };
 
     onRegister(newShop);
@@ -108,7 +110,7 @@ const ShopRegistration: React.FC<ShopRegistrationProps> = ({ onRegister }) => {
             <div className="bg-blue-50 p-4 rounded-lg flex gap-3 items-start">
                <CheckCircle className="text-blue-600 w-5 h-5 flex-shrink-0 mt-0.5" />
                <p className="text-sm text-blue-800">
-                 By creating a shop, you agree to Ecuruza's Seller Terms. Your shop will be reviewed and verified instantly for this demo.
+                 By registering, you agree to Ecuruza's Seller Terms. You will need to select a subscription plan (free trial available) in the next step.
                </p>
             </div>
 
@@ -116,7 +118,7 @@ const ShopRegistration: React.FC<ShopRegistrationProps> = ({ onRegister }) => {
               type="submit"
               className="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-brand-500/20 transition-all"
             >
-              Register Shop & Start Selling
+              Continue to Subscription
             </button>
 
           </form>

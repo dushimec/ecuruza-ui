@@ -2,7 +2,7 @@
 import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
 import { MOCK_PRODUCTS } from '../constants';
-import { Package, DollarSign, TrendingUp, Users, Plus, Edit, Trash2, Store, BadgeCheck } from 'lucide-react';
+import { Package, DollarSign, TrendingUp, Users, Plus, Edit, Trash2, Store, BadgeCheck, AlertTriangle, Clock } from 'lucide-react';
 import { Shop } from '../types';
 
 const data = [
@@ -20,15 +20,61 @@ interface SellerDashboardProps {
 }
 
 const SellerDashboard: React.FC<SellerDashboardProps> = ({ shop }) => {
+  if (shop?.subscriptionStatus === 'expired') {
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+        <div className="bg-white p-8 rounded-2xl shadow-xl text-center max-w-md w-full border-t-4 border-red-500">
+          <div className="inline-flex bg-red-100 p-4 rounded-full mb-4">
+            <AlertTriangle className="w-10 h-10 text-red-500" />
+          </div>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Subscription Expired</h2>
+          <p className="text-gray-600 mb-6">
+            Your seller subscription has expired. Your shop and products are currently hidden from buyers. Please renew to continue selling.
+          </p>
+          <button className="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold py-3 rounded-xl transition-all">
+            Renew Subscription
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const trialDaysLeft = shop?.subscriptionEndDate ? 
+    Math.ceil((new Date(shop.subscriptionEndDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)) : 0;
+
   return (
     <div className="min-h-screen bg-gray-100 p-4 sm:p-8">
       <div className="max-w-7xl mx-auto">
+        
+        {/* Trial Banner */}
+        {shop?.subscriptionStatus === 'trial' && (
+          <div className="bg-indigo-600 text-white p-4 rounded-xl shadow-lg mb-8 flex items-center justify-between flex-wrap gap-4">
+             <div className="flex items-center gap-3">
+               <div className="bg-white/20 p-2 rounded-lg">
+                 <Clock className="w-5 h-5 text-white" />
+               </div>
+               <div>
+                 <p className="font-bold text-sm sm:text-base">Free Trial Active</p>
+                 <p className="text-xs sm:text-sm text-indigo-100">You have {trialDaysLeft} days remaining in your free trial. Full access enabled.</p>
+               </div>
+             </div>
+             <button className="text-xs font-bold bg-white text-indigo-600 px-3 py-1.5 rounded-lg hover:bg-indigo-50 transition-colors">
+               Upgrade Plan
+             </button>
+          </div>
+        )}
+
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
           <div>
             <div className="flex items-center gap-2 mb-1">
               <h1 className="text-2xl font-bold text-trust-900">{shop?.name || 'Seller Dashboard'}</h1>
-              {shop?.isVerified && <BadgeCheck className="text-brand-500 w-6 h-6" />}
+              {shop?.isVerified && (
+                <div className="flex items-center gap-1 text-brand-500 bg-brand-50 px-2 py-0.5 rounded-full border border-brand-100">
+                   <BadgeCheck className="w-4 h-4" />
+                   <span className="text-xs font-bold uppercase">Verified</span>
+                </div>
+              )}
             </div>
             <p className="text-gray-500 text-sm">Manage your store, inventory and track growth.</p>
           </div>

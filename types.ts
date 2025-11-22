@@ -2,15 +2,18 @@
 export enum UserMode {
   BUYER = 'BUYER',
   SELLER = 'SELLER',
+  ADMIN = 'ADMIN',
 }
 
 export interface User {
   id: string;
   name: string;
   email: string;
-  role: 'buyer' | 'seller';
+  role: 'buyer' | 'seller' | 'admin';
   shopId?: string;
 }
+
+export type SubscriptionStatus = 'none' | 'trial' | 'active' | 'expired';
 
 export interface Shop {
   id: string;
@@ -20,6 +23,8 @@ export interface Shop {
   contact: string;
   isVerified: boolean;
   ownerId: string;
+  subscriptionStatus: SubscriptionStatus;
+  subscriptionEndDate: string;
 }
 
 export interface Product {

@@ -1,16 +1,19 @@
-
 import React, { useState, useEffect, useMemo } from 'react';
 import { 
   Search, ShoppingCart, Menu, Store, User as UserIcon, X, Sparkles, 
-  Filter, MapPin, CheckCircle, Heart, Truck, ShieldCheck, ShoppingBag, ChevronDown, ArrowUpDown, Plus, Star, Eye, LogOut
+  Filter, MapPin, CheckCircle, Heart, Truck, ShieldCheck, ShoppingBag, ChevronDown, ArrowUpDown, Plus, Star, Eye, LogOut, Minus
 } from 'lucide-react';
 import { Product, UserMode, CartItem, FilterState, SortOption, User, Shop } from './types';
 import { MOCK_PRODUCTS, SPONSORED_PRODUCTS, CURRENCY } from './constants';
 import SellerDashboard from './components/SellerDashboard';
+import AdminDashboard from './components/AdminDashboard';
 import SponsoredBanner from './components/SponsoredBanner';
 import FilterSidebar from './components/FilterSidebar';
 import AuthModal from './components/AuthModal';
 import ShopRegistration from './components/ShopRegistration';
+import SubscriptionPlans from './components/SubscriptionPlans';
+import ProductCard from './components/ProductCard';
+import WishlistPage from './components/WishlistPage';
 import { searchProductsWithAI } from './services/geminiService';
 
 const App: React.FC = () => {
@@ -22,7 +25,13 @@ const App: React.FC = () => {
 
   // Application State
   const [userMode, setUserMode] = useState<UserMode>(UserMode.BUYER);
-  const [showShopRegistration, setShowShopRegistration] = useState(false);
+  // If shop exists but no subscription, show subscription plan
+  const showSubscription = userShop && userShop.subscriptionStatus === 'none';
+  // If no shop, show registration (when in seller mode)
+  const showShopRegistration = !userShop;
+
+  // Wishlist View State
+  const [showWishlist, setShowWishlist] = useState(false);
 
   const [products, setProducts] = useState<Product[]>(MOCK_PRODUCTS);
   const [searchQuery, setSearchQuery] = useState('');
@@ -30,6 +39,7 @@ const App: React.FC = () => {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [modalQuantity, setModalQuantity] = useState(1);
   const [aiReasoning, setAiReasoning] = useState<string | null>(null);
   
   // Wishlist State with LocalStorage Persistence
@@ -48,6 +58,13 @@ const App: React.FC = () => {
     localStorage.setItem('ecuruza_wishlist', JSON.stringify(wishlist));
   }, [wishlist]);
   
+  // Reset modal quantity when opening a product
+  useEffect(() => {
+    if (selectedProduct) {
+      setModalQuantity(1);
+    }
+  }, [selectedProduct]);
+
   // Filter State
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [filters, setFilters] = useState<FilterState>({
@@ -60,6 +77,7 @@ const App: React.FC = () => {
   // Sort State
   const [sortBy, setSortBy] = useState<SortOption>('newest');
   const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
+  const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
 
   // Initialize default view
   useEffect(() => {
@@ -71,7 +89,7 @@ const App: React.FC = () => {
     if (userMode === UserMode.SELLER) {
       // Switch back to buying
       setUserMode(UserMode.BUYER);
-      setShowShopRegistration(false);
+      setShowWishlist(false);
       return;
     }
 
@@ -82,27 +100,52 @@ const App: React.FC = () => {
       return;
     }
 
-    if (!userShop) {
-      setShowShopRegistration(true);
-      setUserMode(UserMode.SELLER); // Technically in seller flow
-    } else {
-      setUserMode(UserMode.SELLER);
-      setShowShopRegistration(false);
+    if (currentUser.role === 'admin') {
+        setUserMode(UserMode.ADMIN);
+        return;
     }
+
+    // Switch to seller mode to trigger the conditional rendering in JSX
+    setUserMode(UserMode.SELLER);
+    setShowWishlist(false);
   };
 
   const handleAuthSuccess = (user: User) => {
     setCurrentUser(user);
-    // After login, if they were trying to sell, check shop status
-    // This is a simplification. In a real app, we'd track 'intendedDestination'
+    if (user.role === 'admin') {
+        setUserMode(UserMode.ADMIN);
+    } else if (user.role === 'seller') {
+        // In a real app, fetch shop details here
+    }
   };
 
   const handleShopRegister = (shop: Shop) => {
     setUserShop(shop);
-    setShowShopRegistration(false);
     if (currentUser) {
        setCurrentUser({ ...currentUser, role: 'seller', shopId: shop.id });
     }
+  };
+
+  const handleSubscriptionComplete = (planType: 'trial' | 'monthly') => {
+    if (!userShop) return;
+
+    const now = new Date();
+    let endDate = new Date();
+    
+    if (planType === 'trial') {
+      endDate.setMonth(now.getMonth() + 3); // 3 months free
+    } else {
+      endDate.setMonth(now.getMonth() + 1); // 1 month paid
+    }
+
+    const updatedShop: Shop = {
+      ...userShop,
+      isVerified: true, // Verification activated upon subscription
+      subscriptionStatus: planType === 'trial' ? 'trial' : 'active',
+      subscriptionEndDate: endDate.toISOString(),
+    };
+
+    setUserShop(updatedShop);
   };
 
   const handleCheckout = () => {
@@ -120,13 +163,28 @@ const App: React.FC = () => {
     setCurrentUser(null);
     setUserShop(null);
     setUserMode(UserMode.BUYER);
-    setShowShopRegistration(false);
+    setShowWishlist(false);
+  };
+
+  const handleWishlistClick = () => {
+    setShowWishlist(true);
+    setUserMode(UserMode.BUYER); // Ensure we are in buyer mode context
   };
 
   // Extract all unique categories for the sidebar
   const availableCategories = useMemo(() => {
     return Array.from(new Set(MOCK_PRODUCTS.map(p => p.category))).sort();
   }, []);
+  
+  const handleCategoryFilter = (category: string | null) => {
+    setFilters(prev => ({
+      ...prev,
+      categories: category ? [category] : [],
+    }));
+    setIsCategoryDropdownOpen(false);
+    setShowWishlist(false); // Go back to shop view when category is selected
+    setUserMode(UserMode.BUYER);
+  };
 
   // 1. Filter products
   const filteredProducts = useMemo(() => {
@@ -181,6 +239,7 @@ const App: React.FC = () => {
     
     setIsAiSearching(true);
     setAiReasoning(null);
+    setShowWishlist(false); // Exit wishlist when searching
     
     const result = await searchProductsWithAI(searchQuery);
     
@@ -201,13 +260,13 @@ const App: React.FC = () => {
     setIsAiSearching(false);
   };
 
-  const addToCart = (product: Product) => {
+  const addToCart = (product: Product, quantity: number = 1) => {
     setCart(prev => {
       const existing = prev.find(item => item.id === product.id);
       if (existing) {
-        return prev.map(item => item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item);
+        return prev.map(item => item.id === product.id ? { ...item, quantity: item.quantity + quantity } : item);
       }
-      return [...prev, { ...product, quantity: 1 }];
+      return [...prev, { ...product, quantity: quantity }];
     });
     setIsCartOpen(true);
   };
@@ -248,6 +307,7 @@ const App: React.FC = () => {
                setProducts(MOCK_PRODUCTS);
                setAiReasoning(null);
                setUserMode(UserMode.BUYER);
+               setShowWishlist(false);
                setFilters({ categories: [], minPrice: '', maxPrice: '', verifiedOnly: false });
              }}>
                <div className="bg-brand-500 p-2 rounded-lg">
@@ -255,8 +315,44 @@ const App: React.FC = () => {
                </div>
                <span className="font-bold text-xl text-trust-900 tracking-tight">Ecuruza</span>
              </div>
+
+             {/* Categories Dropdown */}
+             <div className="hidden md:block relative">
+               <button 
+                 onClick={() => setIsCategoryDropdownOpen(!isCategoryDropdownOpen)}
+                 className="flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-brand-600 transition-colors p-2 rounded-lg hover:bg-gray-100"
+               >
+                 Categories <ChevronDown size={16} className={`transition-transform ${isCategoryDropdownOpen ? 'rotate-180' : ''}`} />
+               </button>
+               {isCategoryDropdownOpen && (
+                 <>
+                   <div className="fixed inset-0 z-20" onClick={() => setIsCategoryDropdownOpen(false)} />
+                   <div className="absolute left-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-100 z-30 py-2 animate-in fade-in zoom-in-95 duration-100">
+                     <button
+                        onClick={() => handleCategoryFilter(null)}
+                        className="w-full text-left px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-brand-600"
+                      >
+                        All Categories
+                      </button>
+                      <div className="h-px bg-gray-100 my-1" />
+                     {availableCategories.map(cat => (
+                       <button
+                         key={cat}
+                         onClick={() => handleCategoryFilter(cat)}
+                         className={`w-full text-left px-4 py-2.5 text-sm transition-colors hover:bg-gray-50 ${
+                           filters.categories.includes(cat) ? 'text-brand-600 font-medium' : 'text-gray-700'
+                         }`}
+                       >
+                         {cat}
+                       </button>
+                     ))}
+                   </div>
+                 </>
+               )}
+             </div>
+             
              {userMode === UserMode.BUYER && (
-               <div className="hidden md:flex items-center text-xs text-gray-500 bg-gray-100 px-3 py-1.5 rounded-full">
+               <div className="hidden lg:flex items-center text-xs text-gray-500 bg-gray-100 px-3 py-1.5 rounded-full">
                  <MapPin size={14} className="mr-1 text-brand-500" />
                  Delivering to <span className="font-medium text-gray-900 ml-1">Kigali, RW</span>
                </div>
@@ -264,7 +360,7 @@ const App: React.FC = () => {
           </div>
 
           {/* Search Bar (Buyer Only) */}
-          {userMode === UserMode.BUYER && (
+          {userMode === UserMode.BUYER && !showWishlist && (
             <div className="hidden md:flex flex-1 max-w-lg mx-8 relative">
               <input 
                 type="text" 
@@ -287,6 +383,16 @@ const App: React.FC = () => {
 
           {/* Actions */}
           <div className="flex items-center gap-4">
+             {/* Admin Button (only visible for admins) */}
+             {currentUser?.role === 'admin' && (
+                 <button 
+                    onClick={() => setUserMode(UserMode.ADMIN)}
+                    className={`hidden sm:flex text-sm font-bold transition-colors ${userMode === UserMode.ADMIN ? 'text-brand-600' : 'text-trust-900 hover:text-brand-600'}`}
+                 >
+                    Admin Dashboard
+                 </button>
+             )}
+
             <button 
               onClick={handleSellClick}
               className="hidden sm:flex text-sm font-medium text-trust-900 hover:text-brand-500 transition-colors"
@@ -297,11 +403,13 @@ const App: React.FC = () => {
             {userMode === UserMode.BUYER && (
               <>
                 {/* Wishlist Icon Indicator */}
-                {wishlist.length > 0 && (
-                  <div className="hidden md:flex items-center text-gray-400 hover:text-red-500 transition-colors cursor-pointer">
-                    <Heart size={24} className={wishlist.length > 0 ? "fill-red-500 text-red-500" : ""} />
-                  </div>
-                )}
+                <button 
+                  onClick={handleWishlistClick}
+                  className={`hidden md:flex items-center transition-colors cursor-pointer ${showWishlist ? 'text-red-500' : 'text-gray-400 hover:text-red-500'}`}
+                  title="My Wishlist"
+                >
+                  <Heart size={24} className={wishlist.length > 0 ? "fill-red-500 text-red-500" : ""} />
+                </button>
 
                 <button 
                   className="relative p-2 hover:bg-gray-100 rounded-full transition-colors"
@@ -439,89 +547,14 @@ const App: React.FC = () => {
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
           {sortedProducts.map(product => (
-            <div key={product.id} className="group bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col">
-              <div className="relative aspect-square overflow-hidden bg-gray-100 cursor-pointer" onClick={() => setSelectedProduct(product)}>
-                  <img src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                  {product.isVerifiedSeller && (
-                    <div className="absolute top-2 left-2 bg-white/90 backdrop-blur-sm text-trust-900 text-[10px] font-bold px-2 py-1 rounded-md flex items-center gap-1 shadow-sm z-10">
-                      <ShieldCheck size={12} className="text-brand-500" /> Trusted
-                    </div>
-                  )}
-                  {/* Wishlist Button */}
-                  <button 
-                    onClick={(e) => toggleWishlist(e, product.id)}
-                    className={`absolute top-2 right-2 p-2 rounded-full transition-all duration-300 shadow-sm hover:scale-110 active:scale-95 z-10 ${
-                      wishlist.includes(product.id) 
-                        ? 'bg-white text-red-500' 
-                        : 'bg-white/80 backdrop-blur-sm text-gray-500 hover:text-red-500 hover:bg-white'
-                    }`}
-                  >
-                    <Heart size={16} className={wishlist.includes(product.id) ? "fill-current" : ""} />
-                  </button>
-
-                  {/* Quick Add Overlay Button */}
-                  <button 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      addToCart(product);
-                    }}
-                    className="absolute bottom-0 inset-x-0 bg-brand-500/90 backdrop-blur-sm text-white py-3 font-bold text-sm translate-y-full opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center gap-2 z-10"
-                  >
-                    <ShoppingBag size={16} /> Add to Cart
-                  </button>
-              </div>
-              <div className="p-4 flex-1 flex flex-col">
-                <div className="mb-2">
-                  <p className="text-xs text-gray-500 mb-1">{product.category}</p>
-                  <h3 className="text-sm font-medium text-gray-900 line-clamp-2 h-10 cursor-pointer hover:text-brand-600" onClick={() => setSelectedProduct(product)}>
-                    {product.name}
-                  </h3>
-
-                  {/* Ratings */}
-                  <div className="flex items-center gap-1 mt-1">
-                    <div className="flex">
-                        {[...Array(5)].map((_, i) => (
-                            <Star 
-                                key={i} 
-                                size={12} 
-                                className={`${i < Math.round(product.rating) ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`} 
-                            />
-                        ))}
-                    </div>
-                    <span className="text-xs text-gray-500 font-medium ml-1">{product.rating}</span>
-                    <span className="text-xs text-gray-400">({product.reviews})</span>
-                  </div>
-                </div>
-                <div className="mt-auto pt-3 border-t border-gray-50 flex items-center justify-between gap-2">
-                  <div className="flex flex-col">
-                    <p className="text-lg font-bold text-brand-600">{product.currency} {product.price.toLocaleString()}</p>
-                    <p className="text-[10px] text-gray-400 line-through">{product.currency} {Math.floor(product.price * 1.2).toLocaleString()}</p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedProduct(product);
-                      }}
-                      className="p-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors"
-                      title="View Details"
-                    >
-                      <Eye size={16} />
-                    </button>
-                    <button 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        addToCart(product);
-                      }}
-                      className="bg-trust-900 hover:bg-brand-500 text-white px-3 py-1.5 rounded-lg transition-colors shadow-sm flex items-center gap-1.5 text-xs font-bold"
-                    >
-                      <ShoppingCart size={14} />
-                      <span className="hidden sm:inline">Add</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <ProductCard 
+              key={product.id}
+              product={product}
+              isWishlisted={wishlist.includes(product.id)}
+              onToggleWishlist={toggleWishlist}
+              onAddToCart={addToCart}
+              onClick={setSelectedProduct}
+            />
           ))}
         </div>
       )}
@@ -535,15 +568,30 @@ const App: React.FC = () => {
       <Header />
       
       {/* Main Content Switcher */}
-      {userMode === UserMode.BUYER ? (
-        <>
-          <SponsoredBanner products={SPONSORED_PRODUCTS} onProductClick={(p) => setSelectedProduct(p)} />
-          <ProductGrid />
-        </>
+      {userMode === UserMode.ADMIN ? (
+          <AdminDashboard />
+      ) : userMode === UserMode.BUYER ? (
+        showWishlist ? (
+          <WishlistPage 
+            wishlistIds={wishlist}
+            allProducts={MOCK_PRODUCTS}
+            onToggleWishlist={toggleWishlist}
+            onAddToCart={addToCart}
+            onProductClick={setSelectedProduct}
+            onBackToShop={() => setShowWishlist(false)}
+          />
+        ) : (
+          <>
+            <SponsoredBanner products={SPONSORED_PRODUCTS} onProductClick={(p) => setSelectedProduct(p)} />
+            <ProductGrid />
+          </>
+        )
       ) : (
         // Seller Mode
         showShopRegistration ? (
           <ShopRegistration onRegister={handleShopRegister} />
+        ) : showSubscription ? (
+          <SubscriptionPlans onSubscribe={handleSubscriptionComplete} />
         ) : (
           <SellerDashboard shop={userShop || undefined} />
         )
@@ -619,9 +667,35 @@ const App: React.FC = () => {
                 <p className="text-gray-600 text-sm leading-relaxed mb-8 flex-1">
                   {selectedProduct.description}
                 </p>
+                
+                {/* Modal Quantity Selector */}
+                <div className="flex items-center gap-4 mb-8">
+                  <div className="flex items-center bg-gray-100 rounded-xl p-1.5">
+                     <button 
+                       onClick={() => setModalQuantity(Math.max(1, modalQuantity - 1))}
+                       className={`w-10 h-10 flex items-center justify-center rounded-lg bg-white shadow-sm text-gray-600 hover:text-brand-600 transition-colors ${modalQuantity <= 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                       disabled={modalQuantity <= 1}
+                     >
+                       <Minus size={18} />
+                     </button>
+                     <span className="w-12 text-center text-lg font-bold text-gray-900">{modalQuantity}</span>
+                     <button 
+                       onClick={() => setModalQuantity(modalQuantity + 1)}
+                       className="w-10 h-10 flex items-center justify-center rounded-lg bg-white shadow-sm text-gray-600 hover:text-brand-600 transition-colors"
+                     >
+                       <Plus size={18} />
+                     </button>
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-sm text-gray-500">Total Price</span>
+                    <span className="text-xl font-bold text-brand-600">
+                       {selectedProduct.currency} {(selectedProduct.price * modalQuantity).toLocaleString()}
+                    </span>
+                  </div>
+                </div>
 
                 <div className="flex gap-3 mt-auto">
-                   <button className="flex-1 bg-trust-900 hover:bg-trust-800 text-white font-bold py-3.5 rounded-xl transition-all flex justify-center items-center gap-2 shadow-lg shadow-trust-900/20" onClick={() => { addToCart(selectedProduct); setSelectedProduct(null); }}>
+                   <button className="flex-1 bg-trust-900 hover:bg-trust-800 text-white font-bold py-3.5 rounded-xl transition-all flex justify-center items-center gap-2 shadow-lg shadow-trust-900/20" onClick={() => { addToCart(selectedProduct, modalQuantity); setSelectedProduct(null); }}>
                      Add to Cart
                    </button>
                    <button 
@@ -750,3 +824,4 @@ const App: React.FC = () => {
 };
 
 export default App;
+```
