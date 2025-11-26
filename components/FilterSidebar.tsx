@@ -76,18 +76,10 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
                 <div className="space-y-3">
                   {categories.map(category => (
                     <label key={category} className="flex items-center gap-3 cursor-pointer group">
-                      <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${filters.categories.includes(category) ? 'bg-brand-500 border-brand-500' : 'border-gray-300 group-hover:border-brand-500'}`}>
+                      <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${filters.categories.includes(category) ? 'bg-accent-500 border-accent-500' : 'border-gray-300 group-hover:border-accent-400'}`}>
                         {filters.categories.includes(category) && <Check size={12} className="text-white" />}
                       </div>
-                      <input 
-                        type="checkbox" 
-                        className="hidden" 
-                        checked={filters.categories.includes(category)}
-                        onChange={() => handleCategoryToggle(category)}
-                      />
-                      <span className={`text-sm ${filters.categories.includes(category) ? 'text-gray-900 font-medium' : 'text-gray-600'}`}>
-                        {category}
-                      </span>
+                      <span className={`text-sm ${filters.categories.includes(category) ? 'font-semibold text-accent-600' : 'text-gray-700'}`}>{category}</span>
                     </label>
                   ))}
                 </div>
@@ -95,68 +87,65 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
 
               {/* Price Range */}
               <section>
-                <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Price Range ({currency})</h3>
+                <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Price Range</h3>
                 <div className="flex items-center gap-3">
-                  <div className="relative flex-1">
-                    <span className="absolute left-3 top-2.5 text-gray-400 text-xs font-medium">Min</span>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">{currency}</span>
                     <input 
-                      type="number" 
-                      placeholder="0"
+                      type="number"
+                      placeholder="Min"
                       value={filters.minPrice}
-                      onChange={(e) => setFilters({ ...filters, minPrice: e.target.value })}
-                      className="w-full pl-10 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-1 focus:ring-brand-500 focus:border-brand-500 outline-none transition-all"
+                      onChange={(e) => setFilters({...filters, minPrice: e.target.value})}
+                      className="w-full pl-10 pr-2 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-accent-500 outline-none"
                     />
                   </div>
-                  <span className="text-gray-400">-</span>
-                  <div className="relative flex-1">
-                    <span className="absolute left-3 top-2.5 text-gray-400 text-xs font-medium">Max</span>
+                  <div className="flex-shrink-0 text-gray-400">-</div>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">{currency}</span>
                     <input 
-                      type="number" 
-                      placeholder="Any"
+                      type="number"
+                      placeholder="Max"
                       value={filters.maxPrice}
-                      onChange={(e) => setFilters({ ...filters, maxPrice: e.target.value })}
-                      className="w-full pl-10 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-1 focus:ring-brand-500 focus:border-brand-500 outline-none transition-all"
+                      onChange={(e) => setFilters({...filters, maxPrice: e.target.value})}
+                      className="w-full pl-10 pr-2 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-accent-500 outline-none"
                     />
                   </div>
                 </div>
               </section>
-
-              {/* Seller Type */}
+              
+              {/* Seller Verification */}
               <section>
-                <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Seller Verification</h3>
-                <label className="flex items-center gap-3 cursor-pointer group p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-                   <div className={`w-10 h-5 rounded-full relative transition-colors ${filters.verifiedOnly ? 'bg-brand-500' : 'bg-gray-300'}`}>
-                      <div className={`absolute top-1 left-1 w-3 h-3 bg-white rounded-full shadow-sm transition-transform ${filters.verifiedOnly ? 'translate-x-5' : 'translate-x-0'}`} />
-                   </div>
-                   <input 
-                     type="checkbox" 
-                     className="hidden"
-                     checked={filters.verifiedOnly}
-                     onChange={() => setFilters({ ...filters, verifiedOnly: !filters.verifiedOnly })}
-                   />
-                   <div className="flex flex-col">
-                     <span className="text-sm font-medium text-gray-900 flex items-center gap-1">
-                       Verified Only <ShieldCheck size={14} className="text-brand-500" />
-                     </span>
-                   </div>
+                <label className="flex items-center gap-3 cursor-pointer group">
+                  <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${filters.verifiedOnly ? 'bg-accent-500 border-accent-500' : 'border-gray-300 group-hover:border-accent-400'}`}>
+                    {filters.verifiedOnly && <Check size={12} className="text-white" />}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-medium text-gray-700">Verified Sellers Only</span>
+                    <ShieldCheck size={16} className="text-accent-500" />
+                  </div>
                 </label>
+                <input
+                  type="checkbox"
+                  checked={filters.verifiedOnly}
+                  onChange={(e) => setFilters({...filters, verifiedOnly: e.target.checked})}
+                  className="sr-only"
+                />
               </section>
-
             </div>
 
             {/* Footer */}
             <div className="p-5 border-t border-gray-100 bg-gray-50 flex gap-3">
               <button 
                 onClick={clearFilters}
-                className="flex items-center justify-center gap-2 px-4 py-3 text-gray-600 bg-white border border-gray-200 hover:bg-gray-100 rounded-xl text-sm font-medium transition-colors"
+                className="w-full flex items-center justify-center gap-2 bg-white border border-gray-300 text-gray-700 font-medium py-3 rounded-xl text-sm hover:bg-gray-50 transition-colors"
               >
                 <RotateCcw size={16} /> Reset
               </button>
               <button 
                 onClick={onClose}
-                className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-brand-500 hover:bg-brand-600 text-white rounded-xl text-sm font-bold shadow-lg shadow-brand-500/20 transition-colors"
+                className="w-full bg-accent-500 text-white font-bold py-3 rounded-xl text-sm hover:bg-accent-600 transition-colors"
               >
-                Show Results
+                Apply Filters
               </button>
             </div>
           </motion.div>

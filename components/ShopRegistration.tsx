@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Store, MapPin, Phone, FileText, CheckCircle } from 'lucide-react';
 import { Shop } from '../types';
@@ -35,10 +34,10 @@ const ShopRegistration: React.FC<ShopRegistrationProps> = ({ onRegister }) => {
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-2xl mx-auto">
         <div className="text-center mb-10">
-          <div className="inline-flex bg-brand-100 p-4 rounded-full mb-4">
-            <Store className="w-10 h-10 text-brand-600" />
+          <div className="inline-flex bg-accent-100 p-4 rounded-full mb-4">
+            <Store className="w-10 h-10 text-accent-600" />
           </div>
-          <h2 className="text-3xl font-bold text-trust-900">Open Your Shop</h2>
+          <h2 className="text-3xl font-bold text-primary-900">Open Your Shop</h2>
           <p className="mt-2 text-gray-600">Tell us about your business to start selling on Ecuruza.</p>
         </div>
 
@@ -54,7 +53,7 @@ const ShopRegistration: React.FC<ShopRegistrationProps> = ({ onRegister }) => {
                   required
                   value={formData.name}
                   onChange={e => setFormData({...formData, name: e.target.value})}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-accent-500 focus:border-accent-500 outline-none"
                   placeholder="e.g., Kigali Crafts"
                 />
               </div>
@@ -69,7 +68,7 @@ const ShopRegistration: React.FC<ShopRegistrationProps> = ({ onRegister }) => {
                   rows={3}
                   value={formData.description}
                   onChange={e => setFormData({...formData, description: e.target.value})}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none resize-none"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-accent-500 focus:border-accent-500 outline-none resize-none"
                   placeholder="What do you sell?"
                 />
               </div>
@@ -85,7 +84,7 @@ const ShopRegistration: React.FC<ShopRegistrationProps> = ({ onRegister }) => {
                     required
                     value={formData.address}
                     onChange={e => setFormData({...formData, address: e.target.value})}
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none"
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-accent-500 focus:border-accent-500 outline-none"
                     placeholder="Street, City"
                   />
                 </div>
@@ -100,7 +99,7 @@ const ShopRegistration: React.FC<ShopRegistrationProps> = ({ onRegister }) => {
                     required
                     value={formData.contact}
                     onChange={e => setFormData({...formData, contact: e.target.value})}
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none"
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-accent-500 focus:border-accent-500 outline-none"
                     placeholder="+250..."
                   />
                 </div>
@@ -116,7 +115,7 @@ const ShopRegistration: React.FC<ShopRegistrationProps> = ({ onRegister }) => {
 
             <button
               type="submit"
-              className="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-brand-500/20 transition-all"
+              className="w-full bg-accent-500 hover:bg-accent-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-accent-500/20 transition-all"
             >
               Continue to Subscription
             </button>

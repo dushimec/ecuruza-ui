@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { X, Mail, Lock, User, ArrowRight, ShieldAlert } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -72,7 +71,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, initial
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition-all"
+                  className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-accent-500 focus:border-accent-500 outline-none transition-all"
                   placeholder="Enter your name"
                 />
               </div>
@@ -88,7 +87,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, initial
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition-all"
+                className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-accent-500 focus:border-accent-500 outline-none transition-all"
                 placeholder="name@example.com"
               />
             </div>
@@ -103,7 +102,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, initial
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition-all"
+                className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-accent-500 focus:border-accent-500 outline-none transition-all"
                 placeholder="••••••••"
               />
             </div>
@@ -112,7 +111,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, initial
           <button 
             type="submit" 
             disabled={isLoading}
-            className="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold py-3 rounded-xl shadow-lg shadow-brand-500/20 transition-all flex items-center justify-center gap-2 mt-4"
+            className="w-full bg-accent-500 hover:bg-accent-600 text-white font-bold py-3 rounded-xl shadow-lg shadow-accent-500/20 transition-all flex items-center justify-center gap-2 mt-4"
           >
             {isLoading ? (
               'Processing...'
@@ -128,7 +127,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, initial
             <button 
               type="button"
               onClick={() => setMode(mode === 'login' ? 'register' : 'login')}
-              className="text-brand-600 font-bold hover:underline"
+              className="text-accent-600 font-bold hover:underline"
             >
               {mode === 'login' ? 'Sign Up' : 'Log In'}
             </button>
@@ -139,7 +138,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, initial
              <button 
                type="button"
                onClick={handleAdminDemo}
-               className="w-full text-xs text-gray-500 hover:text-trust-900 flex items-center justify-center gap-1.5 py-2"
+               className="w-full text-xs text-gray-500 hover:text-primary-900 flex items-center justify-center gap-1.5 py-2"
              >
                <ShieldAlert size={14} /> Demo Admin Login
              </button>

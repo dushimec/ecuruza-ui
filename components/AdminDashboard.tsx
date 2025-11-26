@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
 import { 
@@ -115,8 +114,8 @@ const AdminDashboard: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
           <div className="flex items-center justify-between mb-4">
-            <div className="bg-brand-50 p-3 rounded-xl">
-              <DollarSign className="text-brand-600 w-6 h-6" />
+            <div className="bg-accent-100 p-3 rounded-xl">
+              <DollarSign className="text-accent-600 w-6 h-6" />
             </div>
             <span className="text-green-500 text-sm font-bold flex items-center gap-1">
               <TrendingUp size={14} /> +12.5%
@@ -128,7 +127,7 @@ const AdminDashboard: React.FC = () => {
 
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
           <div className="flex items-center justify-between mb-4">
-            <div className="bg-blue-50 p-3 rounded-xl">
+            <div className="bg-blue-100 p-3 rounded-xl">
               <Store className="text-blue-600 w-6 h-6" />
             </div>
             <span className="text-blue-500 text-sm font-bold flex items-center gap-1">
@@ -140,7 +139,7 @@ const AdminDashboard: React.FC = () => {
         </div>
 
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-          <div className="bg-purple-50 p-3 rounded-xl w-12 h-12 flex items-center justify-center mb-4">
+          <div className="bg-purple-100 p-3 rounded-xl w-12 h-12 flex items-center justify-center mb-4">
             <Users className="text-purple-600 w-6 h-6" />
           </div>
           <p className="text-gray-500 text-sm font-medium">Total Buyers</p>
@@ -149,7 +148,7 @@ const AdminDashboard: React.FC = () => {
 
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
           <div className="flex items-center justify-between mb-4">
-            <div className="bg-orange-50 p-3 rounded-xl">
+            <div className="bg-orange-100 p-3 rounded-xl">
               <AlertTriangle className="text-orange-600 w-6 h-6" />
             </div>
             <span className="text-orange-500 text-sm font-bold">Action Req.</span>
@@ -173,7 +172,7 @@ const AdminDashboard: React.FC = () => {
                   contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}
                   formatter={(value) => [`${CURRENCY} ${value.toLocaleString()}`, 'Revenue']}
                 />
-                <Line type="monotone" dataKey="revenue" stroke="#f97316" strokeWidth={3} dot={{r: 4, fill: '#f97316'}} />
+                <Line type="monotone" dataKey="revenue" stroke="#7c3aed" strokeWidth={3} dot={{r: 4, fill: '#7c3aed'}} />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -225,7 +224,7 @@ const AdminDashboard: React.FC = () => {
             placeholder="Search sellers..." 
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none"
+            className="pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-accent-500 outline-none"
           />
         </div>
       </div>
@@ -280,7 +279,7 @@ const AdminDashboard: React.FC = () => {
                     </button>
                     <button 
                         onClick={() => handleToggleStatus(shop.id)}
-                        className="p-2 text-gray-400 hover:text-brand-600 hover:bg-gray-100 rounded-lg transition-colors"
+                        className="p-2 text-gray-400 hover:text-accent-600 hover:bg-gray-100 rounded-lg transition-colors"
                         title="Manage Subscription"
                     >
                         <Settings size={18} />
@@ -296,17 +295,17 @@ const AdminDashboard: React.FC = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="min-h-screen bg-primary-100 flex">
       {/* Sidebar */}
-      <aside className="w-64 bg-trust-900 text-white hidden md:flex flex-col fixed inset-y-0 left-0 z-50">
-        <div className="p-6 border-b border-gray-800">
+      <aside className="w-64 bg-primary-900 text-white hidden md:flex flex-col fixed inset-y-0 left-0 z-50">
+        <div className="p-6 border-b border-primary-800">
           <div className="flex items-center gap-2">
-            <div className="bg-brand-500 p-1.5 rounded-lg">
+            <div className="bg-accent-500 p-1.5 rounded-lg">
               <ShieldCheck className="text-white w-5 h-5" />
             </div>
             <div>
                 <h1 className="font-bold text-xl tracking-tight">Ecuruza</h1>
-                <span className="text-[10px] text-gray-400 uppercase tracking-widest font-semibold">Admin Panel</span>
+                <span className="text-[10px] text-primary-400 uppercase tracking-widest font-semibold">Admin Panel</span>
             </div>
           </div>
         </div>
@@ -315,7 +314,7 @@ const AdminDashboard: React.FC = () => {
           <button 
             onClick={() => setActiveTab('overview')}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
-              activeTab === 'overview' ? 'bg-brand-500 text-white shadow-lg' : 'text-gray-400 hover:bg-gray-800 hover:text-white'
+              activeTab === 'overview' ? 'bg-accent-500 text-white shadow-lg' : 'text-primary-300 hover:bg-primary-800 hover:text-white'
             }`}
           >
             <LayoutGrid size={20} /> Overview
@@ -323,7 +322,7 @@ const AdminDashboard: React.FC = () => {
           <button 
             onClick={() => setActiveTab('sellers')}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
-              activeTab === 'sellers' ? 'bg-brand-500 text-white shadow-lg' : 'text-gray-400 hover:bg-gray-800 hover:text-white'
+              activeTab === 'sellers' ? 'bg-accent-500 text-white shadow-lg' : 'text-primary-300 hover:bg-primary-800 hover:text-white'
             }`}
           >
             <Store size={20} /> Seller Management
@@ -331,7 +330,7 @@ const AdminDashboard: React.FC = () => {
           <button 
             onClick={() => setActiveTab('buyers')}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
-              activeTab === 'buyers' ? 'bg-brand-500 text-white shadow-lg' : 'text-gray-400 hover:bg-gray-800 hover:text-white'
+              activeTab === 'buyers' ? 'bg-accent-500 text-white shadow-lg' : 'text-primary-300 hover:bg-primary-800 hover:text-white'
             }`}
           >
             <Users size={20} /> Buyers & Users
@@ -339,21 +338,21 @@ const AdminDashboard: React.FC = () => {
           <button 
              onClick={() => setActiveTab('settings')}
              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
-              activeTab === 'settings' ? 'bg-brand-500 text-white shadow-lg' : 'text-gray-400 hover:bg-gray-800 hover:text-white'
+              activeTab === 'settings' ? 'bg-accent-500 text-white shadow-lg' : 'text-primary-300 hover:bg-primary-800 hover:text-white'
             }`}
           >
             <Settings size={20} /> Platform Settings
           </button>
         </nav>
 
-        <div className="p-4 border-t border-gray-800">
+        <div className="p-4 border-t border-primary-800">
           <div className="flex items-center gap-3 px-4 py-2">
-            <div className="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center text-xs font-bold">
+            <div className="w-8 h-8 bg-primary-700 rounded-full flex items-center justify-center text-xs font-bold">
               AD
             </div>
             <div className="flex-1 overflow-hidden">
               <p className="text-sm font-medium truncate">System Admin</p>
-              <p className="text-xs text-gray-500 truncate">admin@ecuruza.com</p>
+              <p className="text-xs text-primary-400 truncate">admin@ecuruza.com</p>
             </div>
           </div>
         </div>
