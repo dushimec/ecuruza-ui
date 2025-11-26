@@ -31,6 +31,7 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, onAd
       currency: CURRENCY,
       sellerName,
       isVerifiedSeller: true, // Assuming seller is verified to add products
+      dateAdded: new Date().toISOString(), // Add current date
     };
 
     onAddProduct(newProduct);

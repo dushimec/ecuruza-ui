@@ -34,16 +34,27 @@ const ProductCard: React.FC<ProductCardProps> = ({
     onAddToCart(product, quantity);
     setQuantity(1); // Reset quantity after adding
   };
+  
+  const isNew = product.dateAdded && (new Date().getTime() - new Date(product.dateAdded).getTime()) < 7 * 24 * 60 * 60 * 1000;
 
   return (
     <div className="group bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col">
       <div className="relative aspect-square overflow-hidden bg-gray-100 cursor-pointer" onClick={() => onClick(product)}>
           <img src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-          {product.isVerifiedSeller && (
-            <div className="absolute top-2 left-2 bg-white/90 backdrop-blur-sm text-primary-900 text-[10px] font-bold px-2 py-1 rounded-md flex items-center gap-1 shadow-sm z-10">
-              <ShieldCheck size={12} className="text-accent-500" /> Trusted
-            </div>
-          )}
+          
+          <div className="absolute top-2 left-2 flex flex-col gap-1.5 z-10">
+            {isNew && (
+              <div className="bg-blue-500 text-white text-[10px] font-bold px-2 py-1 rounded-md shadow-sm">
+                NEW
+              </div>
+            )}
+            {product.isVerifiedSeller && (
+              <div className="bg-white/90 backdrop-blur-sm text-primary-900 text-[10px] font-bold px-2 py-1 rounded-md flex items-center gap-1 shadow-sm">
+                <ShieldCheck size={12} className="text-accent-500" /> Trusted
+              </div>
+            )}
+          </div>
+
           <button 
             onClick={(e) => onToggleWishlist(e, product.id)}
             className={`absolute top-2 right-2 p-2 rounded-full transition-all duration-300 shadow-sm hover:scale-110 active:scale-95 z-10 ${isWishlisted ? 'bg-white text-red-500' : 'bg-white/80 backdrop-blur-sm text-gray-500 hover:text-red-500 hover:bg-white'}`}

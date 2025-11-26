@@ -1,4 +1,5 @@
 
+
 import { Product, User } from './types';
 
 export const CURRENCY = "RWF"; 
@@ -9,6 +10,12 @@ export const MOCK_ADMIN_USER: User = {
   email: 'admin@ecuruza.com',
   role: 'admin'
 };
+
+const today = new Date();
+const threeDaysAgo = new Date(today);
+threeDaysAgo.setDate(today.getDate() - 3);
+const tenDaysAgo = new Date(today);
+tenDaysAgo.setDate(today.getDate() - 10);
 
 export const MOCK_PRODUCTS: Product[] = [
   {
@@ -27,6 +34,7 @@ export const MOCK_PRODUCTS: Product[] = [
     stock: 15,
     sellerRating: 4.9,
     sellerReviewCount: 230,
+    dateAdded: today.toISOString(), // New today
   },
   {
     id: 'p2',
@@ -44,6 +52,7 @@ export const MOCK_PRODUCTS: Product[] = [
     stock: 42,
     sellerRating: 4.7,
     sellerReviewCount: 150,
+    dateAdded: threeDaysAgo.toISOString(), // New 3 days ago
   },
   {
     id: 'p3',
@@ -60,6 +69,7 @@ export const MOCK_PRODUCTS: Product[] = [
     stock: 100,
     sellerRating: 4.9,
     sellerReviewCount: 88,
+    dateAdded: tenDaysAgo.toISOString(), // Old
   },
   {
     id: 'p4',
@@ -77,6 +87,7 @@ export const MOCK_PRODUCTS: Product[] = [
     stock: 8,
     sellerRating: 4.1,
     sellerReviewCount: 450,
+    dateAdded: tenDaysAgo.toISOString(), // Old
   },
   {
     id: 'p5',

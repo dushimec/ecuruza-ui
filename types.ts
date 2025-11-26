@@ -1,4 +1,5 @@
 
+
 export enum UserMode {
   BUYER = 'BUYER',
   SELLER = 'SELLER',
@@ -43,6 +44,7 @@ export interface Product {
   stock: number;
   sellerRating?: number;
   sellerReviewCount?: number;
+  dateAdded?: string; // To track when product was added
 }
 
 export interface CartItem extends Product {
