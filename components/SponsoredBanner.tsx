@@ -1,7 +1,7 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Product } from '../types';
-import { ShoppingBag, Star, BadgeCheck } from 'lucide-react';
+import { ChevronLeft, ChevronRight, MapPin } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface SponsoredBannerProps {
   products: Product[];
@@ -9,69 +9,116 @@ interface SponsoredBannerProps {
 }
 
 const SponsoredBanner: React.FC<SponsoredBannerProps> = ({ products, onProductClick }) => {
-  // Duplicate products to create a seamless infinite loop
-  const carouselProducts = [...products, ...products, ...products];
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const prevSlide = () => {
+    setCurrentIndex(currentIndex === 0 ? products.length - 1 : currentIndex - 1);
+  };
+  
+  // Use useCallback for stable function reference in useEffect
+  const nextSlide = useCallback(() => {
+    setCurrentIndex(current => (current === products.length - 1 ? 0 : current + 1));
+  }, [products.length]);
+
+  const goToSlide = (slideIndex: number) => {
+    setCurrentIndex(slideIndex);
+  };
+  
+  // Auto-slide effect
+  useEffect(() => {
+    const slideInterval = setInterval(() => {
+        nextSlide();
+    }, 5000); // Change slide every 5 seconds
+
+    return () => clearInterval(slideInterval); // Cleanup interval on component unmount
+  }, [nextSlide]);
+
+
+  if (!products || products.length === 0) {
+    return null; // Don't render if no sponsored products
+  }
+  
+  const currentProduct = products[currentIndex];
 
   return (
-    <div className="w-full bg-trust-900 py-6 overflow-hidden relative border-b-4 border-brand-500">
-      <div className="absolute top-0 left-0 h-full w-20 bg-gradient-to-r from-trust-900 to-transparent z-10 pointer-events-none" />
-      <div className="absolute top-0 right-0 h-full w-20 bg-gradient-to-l from-trust-900 to-transparent z-10 pointer-events-none" />
-      
-      <div className="max-w-7xl mx-auto px-4 mb-4 flex items-center justify-between relative z-20">
-        <h2 className="text-brand-500 text-sm font-bold uppercase tracking-wider flex items-center gap-2">
-          <Star className="w-4 h-4 fill-brand-500" />
-          Featured & Verified
-        </h2>
-        <span className="text-xs text-gray-400">Sponsored</span>
-      </div>
-
-      <motion.div
-        className="flex gap-6 px-4"
-        animate={{
-          x: [0, -1000], 
-        }}
-        transition={{
-          x: {
-            repeat: Infinity,
-            repeatType: "loop",
-            duration: 30,
-            ease: "linear",
-          },
-        }}
-        whileHover={{ animationPlayState: 'paused' }}
-      >
-        {carouselProducts.map((product, index) => (
-          <div
-            key={`${product.id}-${index}`}
-            onClick={() => onProductClick(product)}
-            className="min-w-[280px] bg-white rounded-xl overflow-hidden shadow-lg cursor-pointer transform transition-transform hover:scale-105 flex-shrink-0 group"
-          >
-            <div className="relative h-40 overflow-hidden">
-              <img 
-                src={product.image} 
-                alt={product.name} 
-                className="w-full h-full object-cover group-hover:opacity-90 transition-opacity"
-              />
-              {product.isVerifiedSeller && (
-                <div className="absolute top-2 right-2 bg-trust-500 text-white text-[10px] px-2 py-1 rounded-full flex items-center gap-1 shadow-md">
-                  <BadgeCheck className="w-3 h-3" /> Verified
+    <div className="w-full bg-primary-800 text-white overflow-hidden relative">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
+        <div className="relative h-[480px] md:h-[250px]">
+          <AnimatePresence initial={false} mode="wait">
+            <motion.div
+              key={currentIndex}
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -30 }}
+              transition={{ duration: 0.5, ease: "easeInOut" }}
+              className="absolute inset-0 flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12"
+            >
+              {/* Image Section */}
+              <div className="w-full md:w-1/3 h-56 md:h-full relative rounded-2xl overflow-hidden shadow-2xl">
+                <img 
+                  src={currentProduct.image} 
+                  alt={currentProduct.name} 
+                  className="w-full h-full object-cover" 
+                />
+                <div className="absolute top-3 left-3 bg-highlight-500 text-primary-900 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                  Sponsored
                 </div>
-              )}
-            </div>
-            <div className="p-3 bg-gray-50">
-              <h3 className="text-sm font-semibold text-gray-900 truncate">{product.name}</h3>
-              <div className="flex items-center justify-between mt-2">
-                <span className="text-brand-600 font-bold text-base">
-                  {product.currency} {product.price.toLocaleString()}
+              </div>
+
+              {/* Details Section */}
+              <div className="w-full md:w-2/3 text-center md:text-left">
+                <span className="text-sm font-semibold text-primary-300 border border-primary-700 px-3 py-1 rounded-full">
+                  {currentProduct.category}
                 </span>
-                <button className="bg-trust-900 text-white p-1.5 rounded-lg hover:bg-brand-500 transition-colors">
-                  <ShoppingBag size={14} />
+                <h2 className="text-2xl md:text-3xl font-extrabold text-white mt-4 mb-2 leading-tight tracking-tight">
+                  {currentProduct.name}
+                </h2>
+                <p className="text-primary-300 mb-4 text-sm max-w-md mx-auto md:mx-0">
+                  {currentProduct.description.substring(0, 100)}...
+                </p>
+                
+                <p className="text-3xl font-bold text-accent-400 mb-6">
+                  {currentProduct.currency} {currentProduct.price.toLocaleString()}
+                </p>
+                <button 
+                  onClick={() => onProductClick(currentProduct)}
+                  className="bg-accent-500 hover:bg-accent-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg shadow-accent-500/20 transition-all text-base"
+                >
+                  View Product
                 </button>
               </div>
-            </div>
-          </div>
-        ))}
-      </motion.div>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        {/* Navigation Arrows */}
+        <button 
+          onClick={prevSlide} 
+          className="absolute top-1/2 left-2 md:left-8 transform -translate-y-1/2 bg-black/20 hover:bg-black/40 text-white p-2 rounded-full z-10 transition-colors"
+          aria-label="Previous slide"
+        >
+          <ChevronLeft size={24} />
+        </button>
+        <button 
+          onClick={nextSlide} 
+          className="absolute top-1/2 right-2 md:right-8 transform -translate-y-1/2 bg-black/20 hover:bg-black/40 text-white p-2 rounded-full z-10 transition-colors"
+          aria-label="Next slide"
+        >
+          <ChevronRight size={24} />
+        </button>
+
+        {/* Dots */}
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+          {products.map((_, slideIndex) => (
+            <button 
+              key={slideIndex}
+              onClick={() => goToSlide(slideIndex)}
+              className={`w-2 h-2 rounded-full transition-all duration-300 ${currentIndex === slideIndex ? 'bg-accent-500 scale-125' : 'bg-white/50 hover:bg-white'}`}
+              aria-label={`Go to slide ${slideIndex + 1}`}
+            />
+          ))}
+        </div>
+      </div>
     </div>
   );
 };

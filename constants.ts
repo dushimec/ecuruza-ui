@@ -25,6 +25,8 @@ export const MOCK_PRODUCTS: Product[] = [
     sellerName: 'Mama Africa Styles',
     description: 'Authentic wax print dress, perfect for weddings and formal events. Hand-stitched details.',
     stock: 15,
+    sellerRating: 4.9,
+    sellerReviewCount: 230,
   },
   {
     id: 'p2',
@@ -40,6 +42,8 @@ export const MOCK_PRODUCTS: Product[] = [
     sellerName: 'TechHub Kigali',
     description: 'Premium sound quality with 24-hour battery life. Comfortable over-ear design.',
     stock: 42,
+    sellerRating: 4.7,
+    sellerReviewCount: 150,
   },
   {
     id: 'p3',
@@ -54,6 +58,8 @@ export const MOCK_PRODUCTS: Product[] = [
     sellerName: 'Crafts of Rwanda',
     description: 'Durable and eco-friendly storage basket tailored by local artisans.',
     stock: 100,
+    sellerRating: 4.9,
+    sellerReviewCount: 88,
   },
   {
     id: 'p4',
@@ -69,6 +75,8 @@ export const MOCK_PRODUCTS: Product[] = [
     sellerName: 'Gadget World',
     description: 'Track your steps, heart rate, and sleep. Waterproof and durable.',
     stock: 8,
+    sellerRating: 4.1,
+    sellerReviewCount: 450,
   },
   {
     id: 'p5',
@@ -83,6 +91,8 @@ export const MOCK_PRODUCTS: Product[] = [
     sellerName: 'Natural Glow',
     description: 'Pure unrefined shea butter. Great for skin and hair.',
     stock: 200,
+    sellerRating: 4.8,
+    sellerReviewCount: 512,
   },
   {
     id: 'p6',
@@ -97,6 +107,8 @@ export const MOCK_PRODUCTS: Product[] = [
     sellerName: 'Kigali Leatherworks',
     description: 'Handcrafted genuine leather sandals. Durable rubber sole.',
     stock: 30,
+    sellerRating: 4.6,
+    sellerReviewCount: 95,
   },
   {
     id: 'p7',
@@ -112,6 +124,8 @@ export const MOCK_PRODUCTS: Product[] = [
     sellerName: 'Green Energy Solutions',
     description: 'Charge your devices on the go with solar power. Includes flashlight.',
     stock: 55,
+    sellerRating: 4.7,
+    sellerReviewCount: 180,
   },
   {
     id: 'p8',
@@ -126,6 +140,8 @@ export const MOCK_PRODUCTS: Product[] = [
     sellerName: 'Rwanda Arts',
     description: 'Traditional vibrant beadwork. Necklace and earring set.',
     stock: 12,
+    sellerRating: 4.9,
+    sellerReviewCount: 40,
   },
 ];
 

@@ -3,9 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Ecuruza | Trusted Online Shopping</title>
+    <title>Ecuruza - Buy & Sell Marketplace</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script>
       tailwind.config = {
         theme: {
@@ -14,16 +14,24 @@
               sans: ['Inter', 'sans-serif'],
             },
             colors: {
-              brand: {
-                50: '#fff7ed',
-                100: '#ffedd5',
-                500: '#f97316', // Orange for energy/commerce
-                600: '#ea580c',
-                900: '#7c2d12',
+              primary: { // Dark slate theme
+                100: '#f1f5f9', // slate-100
+                300: '#cbd5e1', // slate-300
+                400: '#94a3b8', // slate-400
+                700: '#334155', // slate-700
+                800: '#1e293b', // slate-800
+                900: '#0f172a', // slate-900
               },
-              trust: {
-                500: '#0f172a', // Deep blue for trust
-                900: '#020617',
+              accent: { // Purple accent
+                100: '#ede9fe', // violet-100
+                200: '#ddd6fe', // violet-200
+                400: '#a78bfa', // violet-400
+                500: '#8b5cf6', // violet-500
+                600: '#7c3aed', // violet-600
+                900: '#4c1d95', // violet-900
+              },
+              highlight: { // Yellow for tags
+                500: '#facc15' // amber-400
               }
             }
           }
@@ -44,7 +52,7 @@
 }
 </script>
 </head>
-  <body class="bg-gray-50 text-gray-900">
+  <body class="bg-white text-gray-900">
     <div id="root"></div>
   </body>
 </html>

@@ -1,3 +1,4 @@
+
 import { GoogleGenAI, Type } from "@google/genai";
 import { MOCK_PRODUCTS } from '../constants';
 import { GeminiSearchResponse } from '../types';
@@ -53,10 +54,13 @@ export const searchProductsWithAI = async (userQuery: string): Promise<GeminiSea
       }
     });
 
+    // FIX: Access `response.text` as a property, not a function call `response.text()`.
     const text = response.text;
     if (!text) throw new Error("No response from AI");
     
-    return JSON.parse(text) as GeminiSearchResponse;
+    // Using trim() to handle potential leading/trailing whitespace in the AI's JSON response.
+    const jsonText = text.trim();
+    return JSON.parse(jsonText) as GeminiSearchResponse;
 
   } catch (error) {
     console.error("Gemini Search Error:", error);

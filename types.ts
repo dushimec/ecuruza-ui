@@ -41,6 +41,8 @@ export interface Product {
   sellerName: string;
   description: string;
   stock: number;
+  sellerRating?: number;
+  sellerReviewCount?: number;
 }
 
 export interface CartItem extends Product {

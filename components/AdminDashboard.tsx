@@ -273,7 +273,7 @@ const AdminDashboard: React.FC = () => {
                   <div className="flex items-center justify-end gap-2">
                     <button 
                         onClick={() => handleVerifyShop(shop.id)}
-                        className={`p-2 rounded-lg transition-colors ${shop.isVerified ? 'text-gray-400 hover:text-red-500' : 'text-green-500 hover:bg-green-50'}`}
+                        className={`p-2 rounded-lg transition-colors ${shop.isVerified ? 'text-gray-400 hover:text-red-500 hover:bg-red-50' : 'text-green-500 hover:bg-green-50'}`}
                         title={shop.isVerified ? "Revoke Verification" : "Verify Shop"}
                     >
                         {shop.isVerified ? <Ban size={18} /> : <CheckCircle size={18} />}
